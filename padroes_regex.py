@@ -11,7 +11,8 @@ padroes = {
     "📋Conclusão do NAD/SESAP": r"relatório.*Núcleo de Atenção Domiciliar da Secretaria de Estado da Saúde Pública.*natal/rn",
     "💳Alvará Eletrônico": r"Conta\/Pcl Resgatada.*Beneficiario.*Titular Conta.*Cta Corrente.*Crédito em C\/C BB Finalidade",
     "⚕️NT NAT/JUS": r"nota técnica.+dados do paciente.+urgente.+paciente.+natjus",
-    "👨‍💼Advogados": r"tjrn.*Processo\sJudicial.*Partes\sProcurador.*\(autor\).*\(reu\)"
+    "👨‍💼Advogados": r"tjrn.*Processo\sJudicial.*Partes\sProcurador.*\(autor\).*\(reu\)",
+    "⚖️Decisão Interlocutória": r"poder\sjudici.rio\sdo\sestado\sdo\srio\sgrande\sdo\snorte.+processo.+decis.o(?!.*MANDADO\sDE\sINTIMAÇÃO\s-\sPRAZO)"
 }
 
 # Dictionary of subpatterns to further refine the search, keyed by label
@@ -28,6 +29,7 @@ subpadroes = {
     "💳Alvará Eletrônico": None,
     "⚕️NT NAT/JUS": None,
     "👨‍💼Advogados": None,
+    "⚖️Decisão Interlocutória": None,
 
 }
 
@@ -45,6 +47,7 @@ stop_padroes = {
     "💳Alvará Eletrônico": False,
     "⚕️NT NAT/JUS": False,
     "👨‍💼Advogados": False,
+    "⚖️Decisão Interlocutória": False,
 }
 
 # Dictionary for stopping after finding subpatterns (if any), keyed by label
@@ -61,5 +64,6 @@ stop_subpadroes = {
     "💳Alvará Eletrônico": True,
     "⚕️NT NAT/JUS": False,
     "👨‍💼Advogados": False,
+    "⚖️Decisão Interlocutória": False,
 
 }

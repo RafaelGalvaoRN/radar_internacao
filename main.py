@@ -25,6 +25,7 @@ with tab1:
                                          stop_subpadroes=stop_subpadroes)
 
 
+
         resultado = capturar_nomes_advogados(resultado)
 
 

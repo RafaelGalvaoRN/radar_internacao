@@ -31,6 +31,8 @@ def sidebar():
     - 📋 **Conclusão do Relatório do NAD/SESAP**
     - 💳 **Alvará Eletrônico de Pagamento**
     - ⚕️ **Nota Técnica do NatJUS**
+    - ⚖️ **Decisão Interlocutória**
+
     """)
 
 def pdf_extract():
@@ -217,7 +219,7 @@ def verifica_information(arquivo: str,
 
         if text:
 
-            # if page_number == 69:
+            # if page_number == 63:
             #     print("imprimindo texto", text)
             #     time.sleep(5000)
 
@@ -269,15 +271,20 @@ def verifica_information(arquivo: str,
     return results
 
 def capturar_nomes_advogados(result):
+    print("dentro da funcao")
     try:
-        texto = result["advogados"][0]["found_text"]
+        texto = result["👨‍💼Advogados"][0]["found_text"]
         # Regex para capturar os nomes antes de "(ADVOGADO)"
-        padrao = r'([A-Z\s]+)\(ADVOGADO\)'
+        padrao = r'\b[A-Z\s]+\b(?=\s+\(ADVOGADO\))'
+
         nomes_advogados = re.findall(padrao, texto)
+
         # Removendo espaços desnecessários
         nomes_advogados = [nome.strip() for nome in nomes_advogados]
-        result["advogados"][0]["found_text"] = nomes_advogados
+        result["👨‍💼Advogados"][0]["found_text"] = nomes_advogados
         return result
-    except:
-        print("Advogados não localizados")
+
+    except Exception as e:
+
+        print("Advogados não localizados: ", e)
         return result
