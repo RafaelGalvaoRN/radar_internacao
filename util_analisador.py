@@ -168,6 +168,11 @@ def clean_value(val):
     return val  # Retorna o valor original se não for dicionário
 
 
+
+
+
+
+
 @get_execution_time
 def verifica_information(arquivo: str,
                          padroes: dict,
