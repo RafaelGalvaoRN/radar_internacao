@@ -3,12 +3,17 @@ from util_analisador import *
 import pandas as pd
 
 
-tab1, tab2 = st.tabs(["Analisador de Processo", "Em construção"])
+
+sidebar()
+
+menu_analisador()
+
+
+tab1, tab2 = st.tabs(["Módulo Home Care", "Em construção"])
 
 
 with tab1:
 
-    menu_analisador()
     arquivos = pdf_extract()
 
 
@@ -20,9 +25,9 @@ with tab1:
                                          stop_subpadroes=stop_subpadroes)
 
 
+        resultado = capturar_nomes_advogados(resultado)
 
 
-    print("terminei")
     if arquivos:
         # Converte o dicionário em um DataFrame para exibição em tabela
         df = pd.DataFrame.from_dict(resultado, orient='index')
@@ -33,7 +38,7 @@ with tab1:
         # Substituir valores NA por '--'
         df = df.fillna('--')
 
-        st.table(df)  # Exibe o dicionário como uma tabela
+        st.dataframe(df, height=400)  # O 'height' define a altura máxima antes de ativar a rolagem
 
 
 

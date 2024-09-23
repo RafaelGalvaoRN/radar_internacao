@@ -7,15 +7,45 @@ from padroes_regex import padroes, subpadroes, \
     stop_padroes, stop_subpadroes
 
 
-def menu_analisador():
-    st.title("Sistema de análise de processos de Internação Hospitalar")
 
+def menu_analisador():
+    st.title("Sistema de Análise de Processos de Judicialização da Saúde - SAPJUS-MPRN")
+
+
+def sidebar():
+    st.sidebar.image("logo-mprn.png", width=150)
+    st.sidebar.title("Menu Analisador de Processo")
+    st.sidebar.markdown("""
+    Capturas já implementadas:
+    """)
+
+    st.sidebar.markdown("""
+    - ⚖️ **Número de Processo**
+    - 🏛️ **Vara Judicial**
+    - 👨‍💼 **Nome do Autor**
+    - 👨‍💼 **Nome(s) do(s) Advogado(s)**
+    - 👨‍💼 **Nome do Réu**
+    - 💰 **Ordens de bloqueio com valores**
+    - 🧾 **Notas Fiscais**
+    - 📄 **Relatório do NAD/SESAP**
+    - 📋 **Conclusão do Relatório do NAD/SESAP**
+    - 💳 **Alvará Eletrônico de Pagamento**
+    - ⚕️ **Nota Técnica do NatJUS**
+    """)
 
 def pdf_extract():
     arquivos = st.file_uploader("Junte os PDF's aqui", type="PDF", accept_multiple_files=True)
     return arquivos
 
 
+def get_execution_time(func):
+    def wraper(*args, **kwargs):  # Accept any arguments
+        start = time.time()
+        result = func(*args, **kwargs)  # Pass arguments to the function
+        end = time.time()
+        st.write(f"Tempo de análise foi de {(end - start):.2f} segundos")
+        return result  # Return the result of the wrapped function
+    return wraper
 
 
 def tratar_texto(texto: str) -> str:
@@ -138,7 +168,7 @@ def clean_value(val):
     return val  # Retorna o valor original se não for dicionário
 
 
-
+@get_execution_time
 def verifica_information(arquivo: str,
                          padroes: dict,
                          subpadroes: dict = None,
@@ -158,7 +188,9 @@ def verifica_information(arquivo: str,
         dict: A dictionary containing the results found in the PDF.
     """
 
-    results = {}
+    results = {k: [] for k in padroes.keys()}
+
+
     reader = PdfReader(arquivo)
     total_pages = len(reader.pages)
 
@@ -180,8 +212,8 @@ def verifica_information(arquivo: str,
 
         if text:
 
-            # if page_number == 368:
-            #     print(text)
+            # if page_number == 69:
+            #     print("imprimindo texto", text)
             #     time.sleep(5000)
 
 
@@ -189,7 +221,6 @@ def verifica_information(arquivo: str,
             texto_tratado = tratar_texto(text)
             print(f"Analyzing page {page_number + 1}")
             print(f"Processed text: {texto_tratado[:500]}...\n")  # Show a snippet of the text
-
 
 
             # Iterate over each label and its associated pattern
@@ -232,73 +263,16 @@ def verifica_information(arquivo: str,
 
     return results
 
-# def verifica_information(arquivo,
-#                          funcoes: list,
-#                          padroes: dict,
-#                          subpadroes: dict = None,
-#                          stop_padroes: dict = None,
-#                          stop_subpadroes: dict = None) -> dict:
-#
-#     results = {}
-#     reader = PdfReader(arquivo)
-#     total_pages = len(reader.pages)
-#     stop_processing = False  # Flag para controlar a parada
-#
-#
-#     # Step 1: Itera sobre cada página do PDF
-#     for i in range(total_pages):
-#         print(f"Página {i+1} de {total_pages}")
-#         page = reader.pages[i]
-#         text = page.extract_text()
-#         #
-#         # if i == 54:
-#         #     print("textto", text)
-#         #     texto_tratado = tratar_texto(text)
-#         #
-#         #     autor_pattern = r"AUTOR:\s*([A-ZÁÉÍÓÚÇãáàéíóúç\s]+)\.?"
-#         #
-#         #     autor_match = re.search(autor_pattern, texto_tratado)
-#         #
-#         #     if autor_match:
-#         #         print(f"Autor: {autor_match.group()}")
-#         #
-#         #     time.sleep(500000)
-#
-#         if text:
-#             texto_tratado = tratar_texto(text)
-#
-#
-#             for funcao in funcoes:
-#                 # Itera sobre os rótulos e seus respectivos padrões
-#                 for rotulo, padrao in padroes.items():
-#                     # Obtém o subpadrão correspondente, se existir
-#                     subpattern = subpadroes.get(rotulo)
-#
-#                     resultado = get_text(texto_tratado, padrao, subpattern)
-#
-#
-#                     if resultado:
-#                         print(f"Achei resultado para o rótulo '{rotulo}': {resultado}")
-#                         # Se encontrar uma correspondência, adiciona aos resultados
-#                         results[f'pagina_{i + 1}'] = {
-#                             'rotulo': rotulo,
-#                             'texto_encontrado': resultado
-#                         }
-#
-#                         # Verifica se deve parar com base em `stop_padroes`
-#                         if stop_padroes and stop_padroes.get(rotulo):
-#                             stop_processing = True
-#                             break
-#
-#                         # Verifica se deve parar com base em `stop_subpadroes`
-#                         if stop_subpadroes and stop_subpadroes.get(rotulo):
-#                             stop_processing = True
-#                             break
-#
-#                     if stop_processing:  # Interrompe o loop interno se a flag for True
-#                         break
-#
-#     return results
-#
-# def convert_to_df (dict: dict):
-#
+def capturar_nomes_advogados(result):
+    try:
+        texto = result["advogados"][0]["found_text"]
+        # Regex para capturar os nomes antes de "(ADVOGADO)"
+        padrao = r'([A-Z\s]+)\(ADVOGADO\)'
+        nomes_advogados = re.findall(padrao, texto)
+        # Removendo espaços desnecessários
+        nomes_advogados = [nome.strip() for nome in nomes_advogados]
+        result["advogados"][0]["found_text"] = nomes_advogados
+        return result
+    except:
+        print("Advogados não localizados")
+        return result
