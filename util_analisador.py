@@ -4,7 +4,7 @@ import time
 import streamlit as st
 from PyPDF2 import PdfReader
 from padroes_regex import padroes, subpadroes, \
-    stop_padroes, stop_subpadroes
+    stop_padroes, stop_subpadroes, padroes_compilados
 
 
 def menu_analisador():
@@ -37,8 +37,14 @@ def sidebar():
     """)
 
 
-def pdf_extract():
-    arquivos = st.file_uploader("Junte os PDF's aqui", type="PDF", accept_multiple_files=True)
+def pdf_extract(total=5):
+
+    arquivos = st.file_uploader(f"Junte os PDF's aqui - no máximo de {total}", type="PDF", accept_multiple_files=True)
+
+    if len(arquivos) > total:
+        st.error(f"Envie no máximo {total} arquivos")
+        return None
+
     return arquivos
 
 
@@ -81,7 +87,9 @@ def get_text(text: str, pattern: str, subpattern: str = None) -> str:
     result = None
     print(f"Analyzing pattern: {pattern}")
 
-    main_pattern = re.compile(pattern, re.IGNORECASE)
+    # main_pattern = re.compile(pattern, re.IGNORECASE)
+    main_pattern = pattern
+
     main_match = main_pattern.search(text)
 
     if main_match:
@@ -92,12 +100,15 @@ def get_text(text: str, pattern: str, subpattern: str = None) -> str:
         # If a subpattern is provided, apply it to the result
         if subpattern:
             print('Analyzing subpattern:', subpattern)
+            print("Analisando texto por meio do subapptern; texto: ", result)
             sub_pattern = re.compile(subpattern, re.IGNORECASE)
             sub_match = sub_pattern.search(result)
 
             if sub_match:
+                print(f'Subpattern {sub_match} match:',sub_match.group())
                 result = sub_match.group()
             else:
+                print(f'Subpattern dont match:')
                 result = None  # Subpattern did not match
 
     else:
@@ -165,7 +176,7 @@ def verifica_information(arquivo: str,
 
         if text:
 
-            # if page_number == 83:
+            # if page_number == 287:
             #     print("imprimindo texto", text)
             #     time.sleep(5000)
 
@@ -183,7 +194,13 @@ def verifica_information(arquivo: str,
                 subpattern = subpadroes.get(label) if subpadroes else None
 
                 print(f"Searching for pattern '{label}': {padrao}")
-                resultado = get_text(texto_tratado, padrao, subpattern)
+
+
+                #testando nova versao
+                # resultado = get_text(texto_tratado, padrao, subpattern)
+
+                padrao_compilado_pattern = padroes_compilados[label]
+                resultado = get_text(texto_tratado, padrao_compilado_pattern, subpattern)
 
                 if resultado:
                     print(f"Found result for '{label}' on page {page_number + 1}: {resultado}")
@@ -216,21 +233,53 @@ def verifica_information(arquivo: str,
 
 
 def capturar_nomes_advogados(result):
-    print("dentro da funcao")
     try:
-        texto = result["👨‍💼Advogados"][0]["found_text"]
-        # Regex para capturar os nomes antes de "(ADVOGADO)"
-        padrao = r'\b[A-Z\s]+\b(?=\s+\(ADVOGADO\))'
+        # Verifica se result é uma lista
+        if isinstance(result, list):
+            # Se for uma lista, iterar sobre seus elementos
+            for item in result:
+                # Verifique se "👨‍💼Advogados" existe e se é uma lista não vazia
+                if "👨‍💼Advogados" in item and isinstance(item["👨‍💼Advogados"], list) and len(item["👨‍💼Advogados"]) > 0:
+                    texto = item["👨‍💼Advogados"][0].get("found_text", "")
+                    if texto:
+                        # Regex para capturar os nomes antes de "(ADVOGADO)"
+                        padrao = r'\b[A-Z\s]+\b(?=\s+\(ADVOGADO\))'
 
-        nomes_advogados = re.findall(padrao, texto)
+                        # Encontrar os nomes de advogados
+                        nomes_advogados = re.findall(padrao, texto)
 
-        # Removendo espaços desnecessários
-        nomes_advogados = [nome.strip() for nome in nomes_advogados]
-        result["👨‍💼Advogados"][0]["found_text"] = nomes_advogados
+                        # Removendo espaços desnecessários
+                        nomes_advogados = [nome.strip() for nome in nomes_advogados]
+
+                        # Atualizando o texto original com os nomes encontrados
+                        item["👨‍💼Advogados"][0]["found_text"] = nomes_advogados if nomes_advogados else "--"
+                else:
+                    # Se a lista de advogados estiver vazia ou não existir, inicializar com "--"
+                    item["👨‍💼Advogados"] = [{"found_text": "--"}]
+        # Verifica se result é um dicionário
+        elif isinstance(result, dict):
+            if "👨‍💼Advogados" in result and isinstance(result["👨‍💼Advogados"], list) and len(result["👨‍💼Advogados"]) > 0:
+                texto = result["👨‍💼Advogados"][0].get("found_text", "")
+                if texto:
+                    padrao = r'\b[A-Z\s]+\b(?=\s+\(ADVOGADO\))'
+                    nomes_advogados = re.findall(padrao, texto)
+                    nomes_advogados = [nome.strip() for nome in nomes_advogados]
+                    result["👨‍💼Advogados"][0]["found_text"] = nomes_advogados if nomes_advogados else "--"
+            else:
+                result["👨‍💼Advogados"] = [{"found_text": "--"}]
         return result
 
     except Exception as e:
-
         print("Advogados não localizados: ", e)
-        result["👨‍💼Advogados"][0]["found_text"] = "---"
+        if isinstance(result, list):
+            for item in result:
+                if "👨‍💼Advogados" in item and len(item["👨‍💼Advogados"]) > 0:
+                    item["👨‍💼Advogados"][0]["found_text"] = "--"
+                else:
+                    item["👨‍💼Advogados"] = [{"found_text": "--"}]
+        elif isinstance(result, dict):
+            if "👨‍💼Advogados" in result and len(result["👨‍💼Advogados"]) > 0:
+                result["👨‍💼Advogados"][0]["found_text"] = "--"
+            else:
+                result["👨‍💼Advogados"] = [{"found_text": "--"}]
         return result

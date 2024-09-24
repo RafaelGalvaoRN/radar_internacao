@@ -1,10 +1,12 @@
 # Dictionary of main patterns to search for in the text, keyed by label
+import re
+
 padroes = {
-    "💰Houve Bloqueio da Conta Salário?": r"RECIBO DE PROTOCOLAMENTO DE BLOQUEIO DE VALORES.*Bloquear Conta-Salário|DETALHAMENTO\sDA\sORDEM\sJUDICIAL\sDE\sDESDOBRAMENTO\sDE\sBLOQUEIO\sDE\sVALORES",
+    "💰Houve Bloqueio da Conta Salário?": r"RECIBO DE PROTOCOLAMENTO DE BLOQUEIO DE VALORES.*Bloquear Conta-Salário|DETALHAMENTO\sDA\sORDEM\sJUDICIAL\sDE\sDESDOBRAMENTO\sDE\sBLOQUEIO\sDE\sVALORES.*|RECIBO DE PROTOCOLAMENTO DE DESDOBRAMENTO DE BLOQUEIO DE VALORES.*",
     "conta_beneficiario_resgatada": r"conta.*beneficiário.*resgatada",
     "⚖️Número do Processo": r"Processo:\s*\d{7}-\d{2}\.\d{4}\.\d\.\d{2}\.\d{4}",
     "👨‍💼Autor": r"AUTOR:\s*([A-ZÁÉÍÓÚÇãáàéíóúç\s]+)\.?",  # Captures the author's name
-    "👨‍💼Réu": r"REU:\s*([A-ZÁÉÍÓÚÇãáàéíóúç\s,]+)decisão?",
+    "👨‍💼Réu": r"([A-ZÁÉÍÓÚÇãáàéíóúç\s,]+)\s*\(REU\)|reu:\s+([A-ZÁÉÍÓÚÇãáàéíóúç\s,]+)decisão",
     "🏛️Vara": r"poder judiciário do estado do rio grande do norte(.*?)processo",
     "🧾Nota Fiscal": r"Nota Fiscal de Serviços Eletrônica - NFS-e",
     "📄NAD/SESAP": r"relatório.*Núcleo de Atenção Domiciliar da Secretaria de Estado da Saúde Pública",
@@ -16,6 +18,9 @@ padroes = {
     "⚖️Decisão Interlocutória": r"poder\sjudici.rio\sdo\sestado\sdo\srio\sgrande\sdo\snorte.+processo.+decis.o(?!.*MANDADO\sDE\sINTIMAÇÃO\s-\sPRAZO)",
     "📜Sentença": r"PODER\s+JUDICIÁRIO\s+DO\s+ESTADO\s+DO\s+RIO\s+GRANDE\s+DO\s+NORTE.*?(?:Processo|Autos)\s*n?.*S\s?E\s?N\s?T\s?E\s?N\s?Ç\s?A.*?(?:Vistos|RELATÓRIO|trata-se)\s"
 }
+
+padroes_compilados = {k:  re.compile(v, re.IGNORECASE) for k, v in padroes.items()}
+
 
 # Dictionary of subpatterns to further refine the search, keyed by label
 subpadroes = {
