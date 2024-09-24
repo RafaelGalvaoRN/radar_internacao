@@ -30,7 +30,7 @@ def sidebar():
     - 📋 **Conclusão do Relatório do NAD/SESAP**
     - 💳 **Alvará Eletrônico de Pagamento**
     - ⚕️ **Solicitação Nota Técnica do NatJUS**
-    - 📝 **SNT NAT/JUS com conclusão**
+    - 📝 **NT NAT/JUS com conclusão**
     - ⚖️ **Decisão Interlocutória**
     - 📜 **Sentença**
 

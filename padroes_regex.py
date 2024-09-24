@@ -14,7 +14,7 @@ padroes = {
     " ️📝NT NAT/JUS com conclusão": r"conclusão.*tecnologia.*conclusão\sjustificada.*conclusão.*há\sevidências\scientíficas",
     "👨‍💼Advogados": r"tjrn.*Processo\sJudicial.*Partes\sProcurador.*\(autor\).*\(reu\)",
     "⚖️Decisão Interlocutória": r"poder\sjudici.rio\sdo\sestado\sdo\srio\sgrande\sdo\snorte.+processo.+decis.o(?!.*MANDADO\sDE\sINTIMAÇÃO\s-\sPRAZO)",
-    "📜 Sentença": r"PODER\s+JUDICIÁRIO\s+DO\s+ESTADO\s+DO\s+RIO\s+GRANDE\s+DO\s+NORTE.*?(?:Processo|Autos)\s*n?.*S\s?E\s?N\s?T\s?E\s?N\s?Ç\s?A.*?(?:Vistos|RELATÓRIO|trata-se)\s"
+    "📜Sentença": r"PODER\s+JUDICIÁRIO\s+DO\s+ESTADO\s+DO\s+RIO\s+GRANDE\s+DO\s+NORTE.*?(?:Processo|Autos)\s*n?.*S\s?E\s?N\s?T\s?E\s?N\s?Ç\s?A.*?(?:Vistos|RELATÓRIO|trata-se)\s"
 }
 
 # Dictionary of subpatterns to further refine the search, keyed by label
@@ -33,7 +33,7 @@ subpadroes = {
     " ️📝NT NAT/JUS com conclusão": None,
     "👨‍💼Advogados": None,
     "⚖️Decisão Interlocutória": None,
-    "📜 Sentença": None,
+    "📜Sentença": None,
 
 }
 
@@ -53,7 +53,7 @@ stop_padroes = {
     "️📝NT NAT/JUS com conclusão": False,
     "👨‍💼Advogados": False,
     "⚖️Decisão Interlocutória": False,
-    "📜 Sentença": False,
+    "📜Sentença": False,
 
 }
 
@@ -73,6 +73,6 @@ stop_subpadroes = {
     "️📝NT NAT/JUS com conclusão": False,
     "👨‍💼Advogados": False,
     "⚖️Decisão Interlocutória": False,
-    "📜 Sentença": False,
+    "📜Sentença": False,
 
 }
