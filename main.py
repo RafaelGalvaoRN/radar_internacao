@@ -39,8 +39,8 @@ with tab1:
         # Substituir valores NA por '--'
         df = df.fillna('--')
 
-
-        st.dataframe(df, height=400)  # O 'height' define a altura máxima antes de ativar a rolagem
+        with st.container():
+            st.dataframe(df, height=600, width=800)  # O 'height' define a altura máxima antes de ativar a rolagem
 
 
 

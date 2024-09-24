@@ -7,7 +7,6 @@ from padroes_regex import padroes, subpadroes, \
     stop_padroes, stop_subpadroes
 
 
-
 def menu_analisador():
     st.title("Sistema de Análise de Processos de Judicialização da Saúde - SAPJUS-MPRN")
 
@@ -30,10 +29,13 @@ def sidebar():
     - 📄 **Relatório do NAD/SESAP**
     - 📋 **Conclusão do Relatório do NAD/SESAP**
     - 💳 **Alvará Eletrônico de Pagamento**
-    - ⚕️ **Nota Técnica do NatJUS**
+    - ⚕️ **Solicitação Nota Técnica do NatJUS**
+    - 📝 **SNT NAT/JUS com conclusão**
     - ⚖️ **Decisão Interlocutória**
+    - 📜 **Sentença**
 
     """)
+
 
 def pdf_extract():
     arquivos = st.file_uploader("Junte os PDF's aqui", type="PDF", accept_multiple_files=True)
@@ -47,6 +49,7 @@ def get_execution_time(func):
         end = time.time()
         st.write(f"Tempo de análise foi de {(end - start):.2f} segundos")
         return result  # Return the result of the wrapped function
+
     return wraper
 
 
@@ -62,58 +65,6 @@ def tratar_texto(texto: str) -> str:
 
     return texto_tratado
 
-
-# def get_text(text, pattern, subpattern=None):
-#     result = None
-#
-#     print(f"Analisando padrao {pattern}")
-#
-#     main_pattern = re.compile(pattern, re.IGNORECASE)
-#
-#     main_match = main_pattern.search(text)
-#
-#     if main_match:
-#         print('Achei main', main_match)
-#         result = main_match.group()
-#
-#         if subpattern:
-#             print('Achei sub', main_match)
-#             sub_pattern = re.compile(subpattern, re.IGNORECASE)
-#
-#             sub_match = sub_pattern.search(result)
-#
-#             if sub_match:
-#                 result = sub_match.group()
-#
-#     return result
-
-# def get_text(text, pattern, subpattern=None):
-#     result = None
-#
-#     print(f"Analisando padrao {pattern}")
-#
-#     main_pattern = re.compile(pattern, re.IGNORECASE)
-#
-#     main_match = main_pattern.search(text)
-#
-#     if main_match:
-#         print('Achei main', main_match.group())
-#         # Use group(1) to get the content of the capturing group
-#         if main_match.lastindex:
-#             result = main_match.group(1)
-#         else:
-#             result = main_match.group()
-#
-#         if subpattern:
-#             print('Analisando subpadrao', subpattern)
-#             sub_pattern = re.compile(subpattern, re.IGNORECASE)
-#
-#             sub_match = sub_pattern.search(result)
-#
-#             if sub_match:
-#                 result = sub_match.group()
-#
-#     return result
 
 def get_text(text: str, pattern: str, subpattern: str = None) -> str:
     """
@@ -154,6 +105,7 @@ def get_text(text: str, pattern: str, subpattern: str = None) -> str:
 
     return result
 
+
 # Função para limpar os valores do dicionário
 def clean_value(val):
     if isinstance(val, dict):
@@ -168,11 +120,6 @@ def clean_value(val):
         elif page:
             return f"(página: {page})"
     return val  # Retorna o valor original se não for dicionário
-
-
-
-
-
 
 
 @get_execution_time
@@ -197,7 +144,6 @@ def verifica_information(arquivo: str,
 
     results = {k: [] for k in padroes.keys()}
 
-
     reader = PdfReader(arquivo)
     total_pages = len(reader.pages)
 
@@ -219,16 +165,14 @@ def verifica_information(arquivo: str,
 
         if text:
 
-            # if page_number == 63:
+            # if page_number == 83:
             #     print("imprimindo texto", text)
             #     time.sleep(5000)
-
 
             # Preprocess the extracted text
             texto_tratado = tratar_texto(text)
             print(f"Analyzing page {page_number + 1}")
             print(f"Processed text: {texto_tratado[:500]}...\n")  # Show a snippet of the text
-
 
             # Iterate over each label and its associated pattern
             for label, padrao in padroes.items():
@@ -270,6 +214,7 @@ def verifica_information(arquivo: str,
 
     return results
 
+
 def capturar_nomes_advogados(result):
     print("dentro da funcao")
     try:
@@ -287,4 +232,5 @@ def capturar_nomes_advogados(result):
     except Exception as e:
 
         print("Advogados não localizados: ", e)
+        result["👨‍💼Advogados"][0]["found_text"] = "---"
         return result

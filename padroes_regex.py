@@ -10,9 +10,11 @@ padroes = {
     "📄NAD/SESAP": r"relatório.*Núcleo de Atenção Domiciliar da Secretaria de Estado da Saúde Pública",
     "📋Conclusão do NAD/SESAP": r"relatório.*Núcleo de Atenção Domiciliar da Secretaria de Estado da Saúde Pública.*natal/rn",
     "💳Alvará Eletrônico": r"Conta\/Pcl Resgatada.*Beneficiario.*Titular Conta.*Cta Corrente.*Crédito em C\/C BB Finalidade",
-    "⚕️NT NAT/JUS": r"nota técnica.+dados do paciente.+urgente.+paciente.+natjus",
+    "⚕️Solicitação NT NAT/JUS": r"nota técnica.+dados do paciente.+urgente.+paciente.+natjus",
+    " ️📝NT NAT/JUS com conclusão": r"conclusão.*tecnologia.*conclusão\sjustificada.*conclusão.*há\sevidências\scientíficas",
     "👨‍💼Advogados": r"tjrn.*Processo\sJudicial.*Partes\sProcurador.*\(autor\).*\(reu\)",
-    "⚖️Decisão Interlocutória": r"poder\sjudici.rio\sdo\sestado\sdo\srio\sgrande\sdo\snorte.+processo.+decis.o(?!.*MANDADO\sDE\sINTIMAÇÃO\s-\sPRAZO)"
+    "⚖️Decisão Interlocutória": r"poder\sjudici.rio\sdo\sestado\sdo\srio\sgrande\sdo\snorte.+processo.+decis.o(?!.*MANDADO\sDE\sINTIMAÇÃO\s-\sPRAZO)",
+    "📜 Sentença": r"PODER\s+JUDICIÁRIO\s+DO\s+ESTADO\s+DO\s+RIO\s+GRANDE\s+DO\s+NORTE.*?(?:Processo|Autos)\s*n?.*S\s?E\s?N\s?T\s?E\s?N\s?Ç\s?A.*?(?:Vistos|RELATÓRIO|trata-se)\s"
 }
 
 # Dictionary of subpatterns to further refine the search, keyed by label
@@ -27,9 +29,11 @@ subpadroes = {
     "📄NAD/SESAP": None,
     "📋Conclusão do NAD/SESAP": r"\D{300,2000}natal/rn",
     "💳Alvará Eletrônico": None,
-    "⚕️NT NAT/JUS": None,
+    "⚕️Solicitação NT NAT/JUS": None,
+    " ️📝NT NAT/JUS com conclusão": None,
     "👨‍💼Advogados": None,
     "⚖️Decisão Interlocutória": None,
+    "📜 Sentença": None,
 
 }
 
@@ -45,9 +49,12 @@ stop_padroes = {
     "📄NAD/SESAP": False,
     "📋Conclusão do NAD/SESAP": False,
     "💳Alvará Eletrônico": False,
-    "⚕️NT NAT/JUS": False,
+    "⚕️Solicitação NT NAT/JUS": False,
+    "️📝NT NAT/JUS com conclusão": False,
     "👨‍💼Advogados": False,
     "⚖️Decisão Interlocutória": False,
+    "📜 Sentença": False,
+
 }
 
 # Dictionary for stopping after finding subpatterns (if any), keyed by label
@@ -62,8 +69,10 @@ stop_subpadroes = {
     "📄NAD/SESAP": True,
     "📋Conclusão do NAD/SESAP": False,
     "💳Alvará Eletrônico": True,
-    "⚕️NT NAT/JUS": False,
+    "⚕️Solicitação NT NAT/JUS": False,
+    "️📝NT NAT/JUS com conclusão": False,
     "👨‍💼Advogados": False,
     "⚖️Decisão Interlocutória": False,
+    "📜 Sentença": False,
 
 }
